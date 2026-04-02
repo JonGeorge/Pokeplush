@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pokered: #E3350D;
+  --color-pokered-light: #FF6B4D;
+  --color-pokeblue: #3B5CA8;
+  --color-pokeblue-light: #6890F0;
+  --color-pokeyellow: #FFCB05;
+  --color-pokegold: #B8860B;
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.9); opacity: 0; }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(227, 53, 13, 0.3); }
+  50% { box-shadow: 0 0 16px rgba(227, 53, 13, 0.5); }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.3s ease-out;
+}
+
+.collected-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
