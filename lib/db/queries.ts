@@ -40,9 +40,9 @@ export async function getCollectedCount(): Promise<number> {
 }
 
 const STATUS_CYCLE: Record<string, string> = {
-  none: "collected",
-  collected: "wanted",
-  wanted: "none",
+  none: "wanted",
+  wanted: "collected",
+  collected: "none",
 };
 
 export async function togglePokemonStatus(
