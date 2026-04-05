@@ -3,10 +3,21 @@
 @theme {
   --color-pokered: #E3350D;
   --color-pokered-light: #FF6B4D;
-  --color-pokeblue: #3B5CA8;
+  --color-pokeblue: #3C5AA6;
   --color-pokeblue-light: #6890F0;
   --color-pokeyellow: #FFCB05;
   --color-pokegold: #B8860B;
+  --color-emerald-600: #059669;
+  --color-dark: #0F181A;
+  --color-muted: #94A3B8;
+  --color-border: #E2E8F0;
+  --color-search-placeholder: #64748B;
+  --font-heading: 'Lexend Deca', sans-serif;
+  --font-body: 'Figtree', sans-serif;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
 }
 
 @keyframes bounce-in {
@@ -20,6 +31,12 @@
   50% { box-shadow: 0 0 16px rgba(227, 53, 13, 0.5); }
 }
 
+@keyframes tap-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
 .animate-bounce-in {
   animation: bounce-in 0.3s ease-out;
 }
@@ -28,10 +45,30 @@
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+.animate-tap-pop {
+  animation: tap-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+.font-heading {
+  font-family: var(--font-heading), 'Lexend Deca', sans-serif;
+}
+
+.font-body {
+  font-family: var(--font-body), 'Figtree', sans-serif;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.animate-skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
 }
