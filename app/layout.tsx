@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Header } from "@/components/header";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,13 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      
       <body className="bg-slate-50 min-h-screen">
-        <h1>Pokémon Plushie Collection</h1>
+        <Header />
         {children}
-        <footer>
-          <p>&copy; 2023 Pokémon Plushie Collection. All rights reserved.</p>
-        </footer>
       </body>
     </html>
   );
