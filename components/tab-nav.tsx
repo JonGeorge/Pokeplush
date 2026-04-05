@@ -21,8 +21,8 @@ export function TabNav({
   onTabChange: (tabId: string) => void;
 }) {
   return (
-    <nav className="bg-white w-full pt-10">
-      <div className="flex gap-14 items-start justify-center px-20">
+    <nav className="bg-white w-full pt-6 md:pt-10 pb-2">
+      <div className="flex gap-6 sm:gap-8 lg:gap-14 items-start justify-start lg:justify-center px-4 sm:px-8 lg:px-20 overflow-x-auto scrollbar-hide">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
 
@@ -31,7 +31,7 @@ export function TabNav({
               <a
                 key={tab.id}
                 href={tab.href}
-                className="font-body font-normal text-[18px] text-dark whitespace-nowrap pb-2"
+                className="font-body font-normal text-[15px] sm:text-[16px] md:text-[18px] text-dark whitespace-nowrap pb-2 border-b-2 border-transparent"
               >
                 {tab.label}
               </a>
@@ -42,28 +42,16 @@ export function TabNav({
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`font-body text-[18px] whitespace-nowrap pb-2 transition-colors ${
+              className={`font-body text-[15px] sm:text-[16px] md:text-[18px] whitespace-nowrap pb-2 border-b-2 transition-colors ${
                 isActive
-                  ? "font-semibold text-pokered"
-                  : "font-normal text-dark hover:text-pokered/70"
+                  ? "font-semibold text-pokered border-pokered"
+                  : "font-normal text-dark hover:text-pokered/70 border-transparent"
               }`}
             >
               {tab.label}
             </button>
           );
         })}
-      </div>
-      {/* Underline indicators */}
-      <div className="flex gap-14 items-start justify-center px-20 py-[10px]">
-        {TABS.map((tab) => (
-          <div
-            key={tab.id}
-            className={`h-px ${
-              activeTab === tab.id ? "bg-pokered" : ""
-            }`}
-            style={{ width: tab.id === "whos-that" ? 177 : tab.id === "all" ? 102 : tab.id === "wishlist" ? 119 : 106 }}
-          />
-        ))}
       </div>
     </nav>
   );

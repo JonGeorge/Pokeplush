@@ -100,7 +100,7 @@ export function HeroSection({
   }, [allPokemon]);
 
   return (
-    <section className="relative bg-pokeblue w-full h-[512px] overflow-hidden">
+    <section className="relative bg-pokeblue w-full h-[280px] sm:h-[380px] md:h-[512px] overflow-hidden">
       {/* Background sprite pattern — centered, clips at edges, hidden on small screens */}
       <div className="absolute inset-0 hidden sm:flex flex-col gap-[54px] pt-10 pointer-events-none items-center">
         {spriteRows.map((row, i) => (
@@ -109,16 +109,16 @@ export function HeroSection({
       </div>
 
       {/* POKÉPLUSH logo */}
-      <p className="absolute top-8 left-1/2 -translate-x-1/2 font-heading font-extrabold text-[24px] text-pokeyellow tracking-[-1px] leading-[56px] whitespace-nowrap z-10">
+      <p className="absolute top-4 sm:top-6 md:top-8 left-1/2 -translate-x-1/2 font-heading font-extrabold text-[20px] md:text-[24px] text-pokeyellow tracking-[-1px] leading-[56px] whitespace-nowrap z-10">
         POKÉPLUSH
       </p>
 
       {/* Collected count — responsive text sizing */}
-      <div className="absolute top-[160px] left-1/2 -translate-x-1/2 flex flex-col items-center text-white text-center tracking-[-1px] z-10 pb-4">
-        <p className="font-heading font-normal text-[185px] leading-none">
+      <div className="absolute top-[80px] sm:top-[110px] md:top-[160px] left-1/2 -translate-x-1/2 flex flex-col items-center text-white text-center tracking-[-1px] z-10 pb-4">
+        <p className="font-heading font-normal text-[80px] sm:text-[120px] md:text-[185px] leading-none">
           {collectedCount}
         </p>
-        <p className="font-heading font-normal text-[48px] leading-none">
+        <p className="font-heading font-normal text-[24px] sm:text-[36px] md:text-[48px] leading-none">
           collected!
         </p>
       </div>
