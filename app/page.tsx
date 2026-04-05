@@ -21,12 +21,10 @@ export default async function Home() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto">
-      <CollectionView
-        initialPokemon={allPokemon}
-        initialCollectedCount={collectedCount}
-        initialTrusted={trusted}
-      />
-    </main>
+    <CollectionView
+      initialPokemon={allPokemon}
+      initialCollectedCount={collectedCount}
+      initialTrusted={trusted}
+    />
   );
 }

@@ -1,17 +1,18 @@
 "use client";
 
 import { useState, useMemo, useCallback, useRef } from "react";
-import { CollectionCounter } from "./collection-counter";
-import { PokeballProgress } from "./pokeball-progress";
+import { HeroSection } from "./hero-section";
+import { TabNav } from "./tab-nav";
+import { FilterSidebar } from "./filter-sidebar";
 import { SearchBar } from "./search-bar";
-import { GenerationFilter, TypeFilter, StatusFilter } from "./filter-pills";
 import { PokemonGrid } from "./pokemon-grid";
 import type { PokemonWithStatus } from "@/lib/db/queries";
 
+// Tap cycle: none → wanted → collected → none
 const STATUS_CYCLE: Record<string, string> = {
-  none: "collected",
-  collected: "wanted",
-  wanted: "none",
+  none: "wanted",
+  wanted: "collected",
+  collected: "none",
 };
 
 export function CollectionView({
@@ -35,9 +36,9 @@ export function CollectionView({
 
   // Filter state
   const [search, setSearch] = useState("");
-  const [genFilter, setGenFilter] = useState<number | null>(null);
-  const [typeFilter, setTypeFilter] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<"all" | "collected" | "wanted">("all");
+  const [selectedGens, setSelectedGens] = useState<Set<number>>(new Set());
+  const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState("all");
 
   // Derive available generations and types from the data
   const generations = useMemo(() => {
@@ -78,20 +79,53 @@ export function CollectionView({
     const q = search.toLowerCase();
     return allPokemon.filter((p) => {
       if (q && !p.name.toLowerCase().includes(q)) return false;
-      if (genFilter !== null && p.generation !== genFilter) return false;
-      if (typeFilter !== null && !p.types.includes(typeFilter)) return false;
-      if (statusFilter === "collected" && p.status !== "collected") return false;
-      if (statusFilter === "wanted" && p.status !== "wanted") return false;
+      if (selectedGens.size > 0 && !selectedGens.has(p.generation)) return false;
+      if (selectedTypes.size > 0 && !p.types.some((t) => selectedTypes.has(t))) return false;
+      // Tab filtering
+      if (activeTab === "wishlist" && p.status !== "wanted") return false;
+      if (activeTab === "collection" && p.status !== "collected") return false;
       return true;
     });
-  }, [allPokemon, search, genFilter, typeFilter, statusFilter]);
+  }, [allPokemon, search, selectedGens, selectedTypes, activeTab]);
+
+  const handleGenChange = useCallback((gen: number | "all") => {
+    if (gen === "all") {
+      setSelectedGens(new Set());
+    } else {
+      setSelectedGens((prev) => {
+        const next = new Set(prev);
+        if (next.has(gen)) {
+          next.delete(gen);
+        } else {
+          next.add(gen);
+        }
+        return next;
+      });
+    }
+  }, []);
+
+  const handleTypeChange = useCallback((type: string | "all") => {
+    if (type === "all") {
+      setSelectedTypes(new Set());
+    } else {
+      setSelectedTypes((prev) => {
+        const next = new Set(prev);
+        if (next.has(type)) {
+          next.delete(type);
+        } else {
+          next.add(type);
+        }
+        return next;
+      });
+    }
+  }, []);
 
   const handleToggle = useCallback(
     async (pokedexNumber: number) => {
       if (!trusted) return;
 
       const prevStatus = pokemonMap.get(pokedexNumber) ?? "none";
-      const nextStatus = STATUS_CYCLE[prevStatus] ?? "collected";
+      const nextStatus = STATUS_CYCLE[prevStatus] ?? "wanted";
 
       setPokemonMap((prev) => {
         const next = new Map(prev);
@@ -144,53 +178,51 @@ export function CollectionView({
     [trusted, pokemonMap]
   );
 
-  const hasActiveFilters = search || genFilter !== null || typeFilter !== null || statusFilter !== "all";
-
   return (
-    <>
-      {/* Scrollable header */}
-      <CollectionCounter count={collectedCount} />
-      <PokeballProgress collected={collectedCount} total={initialPokemon.length} />
+    <div className="bg-white min-h-screen" suppressHydrationWarning>
+      {/* Hero */}
+      <HeroSection collectedCount={collectedCount} allPokemon={allPokemon} />
 
-      {/* Sticky filter bar */}
-      <div className="sticky top-0 z-40 bg-slate-50/95 backdrop-blur-sm pt-2 pb-3 px-4 space-y-2 border-b border-slate-200/60">
-        <SearchBar value={search} onChange={setSearch} />
-        <GenerationFilter generations={generations} selected={genFilter} onChange={setGenFilter} />
-        <TypeFilter types={types} selected={typeFilter} onChange={setTypeFilter} />
-        <div className="pt-1 border-t border-slate-200/60">
-          <StatusFilter selected={statusFilter} onChange={setStatusFilter} />
-        </div>
+      {/* Tab Navigation */}
+      <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* Two-column layout: sidebar + content */}
+      <div className="flex">
+        {/* Left sidebar filters */}
+        <FilterSidebar
+          generations={generations}
+          types={types}
+          selectedGens={selectedGens}
+          selectedTypes={selectedTypes}
+          onGenChange={handleGenChange}
+          onTypeChange={handleTypeChange}
+        />
+
+        {/* Right content area */}
+        <main className="flex-1 flex flex-col gap-6 py-6 px-4 sm:px-6 md:pl-0 md:pr-16">
+          <SearchBar value={search} onChange={setSearch} />
+
+          {filteredPokemon.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <p className="font-body text-lg text-muted">
+                {search
+                  ? `No Pokémon found for "${search}"`
+                  : activeTab === "wishlist"
+                    ? "No Pokémon on your wishlist"
+                    : activeTab === "collection"
+                      ? "No Pokémon in your collection"
+                      : "No Pokémon match these filters"}
+              </p>
+            </div>
+          ) : (
+            <PokemonGrid
+              pokemon={filteredPokemon}
+              editable={trusted}
+              onToggle={handleToggle}
+            />
+          )}
+        </main>
       </div>
-
-      {/* Grid or empty state */}
-      {filteredPokemon.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-          <p className="text-4xl mb-3">🔍</p>
-          <p className="text-lg text-slate-500">
-            {search
-              ? `No Pokémon found for "${search}"`
-              : "No Pokémon match these filters"}
-          </p>
-        </div>
-      ) : (
-        <div className="pt-3">
-          <PokemonGrid
-            pokemon={filteredPokemon}
-            editable={trusted}
-            onToggle={handleToggle}
-          />
-        </div>
-      )}
-
-      {trusted && <EditModeIndicator />}
-    </>
-  );
-}
-
-function EditModeIndicator() {
-  return (
-    <div className="fixed bottom-4 right-4 bg-white/90 backdrop-blur-sm text-slate-600 text-xs font-medium px-3 py-1.5 rounded-full shadow-md border border-slate-200 z-50">
-      ✏️ Edit Mode
     </div>
   );
 }
