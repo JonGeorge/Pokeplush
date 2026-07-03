@@ -41,6 +41,9 @@ export function WhosThatView() {
         (window as any).webkitSpeechRecognition;
 
       if (SpeechRecognition) {
+        // One-time capability detection must run after mount so server and
+        // client render the same initial HTML (no hydration mismatch)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setHasSpeechRecognition(true);
         const recognition = new SpeechRecognition();
         recognition.continuous = false;

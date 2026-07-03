@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       throw new Error("Invalid request body");
     }
 
-    const { description, priorClues } = body;
+    const { description } = body;
 
     if (!description || typeof description !== "string") {
       console.error("Step 2 FAILED: Invalid description");
@@ -55,6 +55,18 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    if (description.length > 2000) {
+      return NextResponse.json(
+        { error: "Description is too long" },
+        { status: 400 }
+      );
+    }
+
+    const priorClues = Array.isArray(body.priorClues)
+      ? body.priorClues
+          .filter((c): c is string => typeof c === "string")
+          .slice(0, 20)
+      : [];
 
     // Get all Pokemon from database
     console.log("Step 3: Fetching Pokemon from database...");

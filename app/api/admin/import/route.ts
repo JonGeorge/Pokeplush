@@ -7,8 +7,10 @@ type ImportEntry = {
   status: string;
 };
 
+const MAX_IMPORT_ENTRIES = 5000;
+
 function validateImportData(data: unknown): ImportEntry[] | null {
-  if (!Array.isArray(data)) return null;
+  if (!Array.isArray(data) || data.length > MAX_IMPORT_ENTRIES) return null;
 
   const entries: ImportEntry[] = [];
   for (const item of data) {

@@ -8,10 +8,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
   const { pokedexNumber } = body as { pokedexNumber?: number };
 
-  if (typeof pokedexNumber !== "number") {
+  if (
+    typeof pokedexNumber !== "number" ||
+    !Number.isInteger(pokedexNumber) ||
+    pokedexNumber < 1
+  ) {
     return NextResponse.json({ error: "Invalid pokedexNumber" }, { status: 400 });
   }
 

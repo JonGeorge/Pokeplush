@@ -13,6 +13,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "overrides": {
+    "next": {
+      "postcss": ">=8.5.10"
+    },
+    "@esbuild-kit/core-utils": {
+      "esbuild": ">=0.25.0"
+    }
+  },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@neondatabase/serverless": "^1.0.2",
